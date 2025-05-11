@@ -80,12 +80,12 @@ function ImageComp({
             <div ref={ref} className="img-wrapper">
                 <Image width={500} height={600} src={src} alt="A London skyscraper" />
             </div>
-            <motion.h2
+            {/* <motion.h2
                 // Hide until scroll progress is measured
                 initial={{ visibility: "hidden" }}
                 animate={{ visibility: "visible" }}
                 style={{ y }}
-            >{`#00${id}`}</motion.h2>
+            >{`#00${id}`}</motion.h2> */}
         </section>
     )
 }
