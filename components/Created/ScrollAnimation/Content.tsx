@@ -139,151 +139,101 @@ export default function Parallax() {
 function StyleSheet() {
     return (
         <style>{`
-       
-
         .img-container {
-            height: 100vh;
-            scroll-snap-align: start;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-                
+          height: 100vh;
+          scroll-snap-align: start;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          position: relative;
+          padding: 1rem;
         }
-
-        .img-container > div {
-            width: 300px;
-            height: 400px;
-            margin: 20px;
-            background: var(--white);
-            overflow: hidden;
-            margin:0 auto
-        }
-
-        .img-container img {
-            width: 600px;
-            height: 500px;
-            border-radius: 20px;
-        }
-
-        @media (max-width: 500px) {
-            .img-container > div {
-                width: 150px;
-                height: 200px;
-            }
-
-            .img-container img {
-                width: 150px;
-                height: 200px;
-            }
-        }
-
-        .img-container h2 {
-            color: var(--hue-6);
-            margin: 0;
-            font-family: "Azeret Mono", monospace;
-            font-size: 50px;
-            font-weight: 700;
-            letter-spacing: -3px;
-            line-height: 1.2;
-            position: absolute;
-            display: inline-block;
-            top: calc(50% - 25px);
-            left: calc(50% + 120px);
-        }
-
-        .progress {
-            position: fixed;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: var(--hue-6);
-            bottom: 50px;
-            transform: scaleX(0);
-        }
-
-        .section-heading {
-          position: absolute;
-          top: 50px;
-          left: 0;
+  
+        .img-wrapper {
           width: 100%;
+          max-width: 600px;
+          height: auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 2rem;
+        }
+  
+        .img-wrapper img {
+          width: 100%;
+          height: auto;
+          border-radius: 20px;
+          object-fit: cover;
+        }
+  
+        .section-heading {
           text-align: center;
           z-index: 10;
           pointer-events: none;
+          padding: 0 1rem;
         }
-
+  
         .section-heading h1 {
           font-family: "Azeret Mono", monospace;
-          font-size: 3.5rem;
+          font-size: 3rem;
           font-weight: 700;
           color: var(--hue-6);
           margin: 0;
           text-transform: uppercase;
         }
-
+  
         .section-heading p {
           font-family: "Inter", sans-serif;
           font-size: 1.2rem;
           color: var(--white);
-          margin: 0;
+          margin: 0.5rem 0 0;
           opacity: 0.8;
         }
-
+  
+        .progress {
+          position: fixed;
+          left: 0;
+          right: 0;
+          height: 5px;
+          background: var(--hue-6);
+          bottom: 50px;
+          transform: scaleX(0);
+        }
+  
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+          .section-heading h1 {
+            font-size: 2.5rem;
+          }
+          .section-heading p {
+            font-size: 1rem;
+          }
+        }
+  
         @media (max-width: 768px) {
           .section-heading h1 {
             font-size: 2rem;
           }
-          
           .section-heading p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
           }
         }
-
-        .header-container {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            z-index: 10;
-            text-align: center;
-            pointer-events: none;
+  
+        @media (max-width: 500px) {
+          .section-heading h1 {
+            font-size: 1.5rem;
+          }
+          .section-heading p {
+            font-size: 0.85rem;
+          }
+          .img-wrapper {
+            max-width: 90%;
+          }
+          .img-wrapper img {
+            border-radius: 15px;
+          }
         }
-
-        .main-heading {
-            font-family: "Azeret Mono", monospace;
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--hue-6);
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 0px;
-        }
-
-        .sub-heading {
-            font-family: "Inter", sans-serif;
-            font-size: 1rem;
-            color: var(--white);
-            margin: 0;
-            opacity: 0.7;
-        }
-
-        @media (max-width: 768px) {
-            .main-heading {
-                font-size: 2.5rem;
-            }
-            
-            .sub-heading {
-                font-size: 0.8rem;
-            }
-        }
-
-                .img-wrapper{
-                width:600px!important;
-                height:500px!important;
-                 
-                }
-
-
-    `}</style>
-    )
+      `}</style>
+    );
 }
