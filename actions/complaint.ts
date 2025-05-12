@@ -2,6 +2,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Complaint from '@/lib/models/Complaint';
 import { v2 as cloudinary } from 'cloudinary';
 
+
 // Cloudinary configuration
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -73,7 +74,7 @@ export async function saveComplaint(payload: ComplaintPayload) {
         contactInfo: payload.isAnonymous ? undefined : payload.contactInfo,
         status: 'pending',
     });
-
+    // await sendComplaintRegisteredEmail(user.email, complaint._id.toString());
     await complaint.save();
     return complaint;
 }

@@ -11,6 +11,8 @@ import { MagicCard } from "./magicui/magic-card"
 import { useTheme } from "next-themes"
 import { toast } from "sonner"
 import { createUser, loginUser } from "@/actions/user"
+import Cookies from 'js-cookie';
+import { useRouter } from "next/navigation"
 
 export function AuthForm({
   className,
@@ -18,40 +20,54 @@ export function AuthForm({
 }: React.ComponentProps<"div">) {
   const [isLogin, setIsLogin] = useState(true)
   const { theme } = useTheme();
-
+  const router = useRouter()
 
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const form = e.currentTarget;
+    const email = form.email.value;
+    const password = form.password.value;
+
     try {
-
-
       if (isLogin) {
-        const formData = {
-          email: e.currentTarget.email.value,
-          password: e.currentTarget.password.value,
-        };
-        await loginUser(formData);
-        toast.success("Logged in successfully");
+        const data = await loginUser({ email, password });
+
+        if (data.success) {
+          Cookies.set("auth_token", data.token ?? "", { expires: 1 });
+          toast.success("Logged in successfully");
+          router.replace("/");
+        } else {
+          toast.error(data.error || "Invalid credentials");
+        }
       } else {
+        const name = (form.elements.namedItem("name") as HTMLInputElement)?.value;
+        const phone = form.phone?.value;
+        const confirmPassword = form["confirm-password"].value;
+        const anonymous = form.anonymous?.checked ?? false;
+
         const formData = {
-          email: e.currentTarget.email.value,
-          name: (e.currentTarget.elements.namedItem("name") as HTMLInputElement)?.value,
-          phone: e.currentTarget.phone?.value,
-          anonymous: e.currentTarget.anonymous?.checked,
+          email,
+          name,
+          phone,
+          password,
+          confirmPassword,
+          anonymous,
         };
-        await createUser(formData);
-        toast.success("User created");
+
+        const response = await createUser(formData);
+
+        if (response.success) {
+          toast.success("User created successfully");
+          router.replace("/");
+        } else {
+          toast.error(response.error || "Failed to create user");
+        }
       }
-
-      toast.success(isLogin ? "Logged in successfully" : "User created");
-
-
-      window.location.href = "/";
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error("Unexpected error occurred");
     }
   };
 
