@@ -7,9 +7,7 @@ export function TextAnimateDemo6({
 }) {
     return (
         <TextAnimate delay={0.5} animation="slideLeft" by="character" className="text-5xl font-bold">
-            {
-                children
-            }
+            {typeof children === "string" ? children : String(children)}
         </TextAnimate>
     );
 }

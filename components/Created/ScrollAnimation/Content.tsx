@@ -1,18 +1,14 @@
 "use client"
 
-import { motion, type MotionValue, useScroll, useSpring, useTransform } from "motion/react"
+import { motion, useScroll, useSpring } from "motion/react"
 import Image from "next/image"
 import { useRef } from "react"
 
-function useParallax(value: MotionValue<number>, distance: number) {
-    return useTransform(value, [0, 1], [-distance, distance])
-}
+
 
 function ImageComp({
     id,
-    src,
-    title,
-    description,
+    src
 }: {
     id: number
     src: string
@@ -20,8 +16,8 @@ function ImageComp({
     description: string
 }) {
     const ref = useRef(null)
-    const { scrollYProgress } = useScroll({ target: ref })
-    const y = useParallax(scrollYProgress, 300)
+
+
 
     // Get heading text based on image id
     const getHeadingText = () => {
@@ -49,7 +45,7 @@ function ImageComp({
     }
 
     return (
-        <section className="img-container">
+        <section className="img-container mx-auto">
             <motion.div
                 className="section-heading"
                 initial={{ opacity: 0, y: -30 }}
@@ -70,7 +66,7 @@ function ImageComp({
                 <motion.p
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 0.8 }}
-                    transition={{ duration: 0.5, delay: 0.2, delay: 0.2 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                     viewport={{ once: false, margin: "-100px 0px -100px 0px" }}
                 >
                     {getSubheadingText()}
@@ -92,17 +88,17 @@ function ImageComp({
 
 const content = [
     {
-        src: "/nelia-iv-7j9X536STZA-unsplash.jpg",
+        src: "/pensive-businessman-talking-phone-while-commuting-by-bus.jpg",
         title: "✅ Report a Problem",
         description: "Select the category, location, and describe the issue anonymously or with contact.",
     },
     {
-        src: "/nelia-iv-7j9X536STZA-unsplash.jpg",
+        src: "/man-is-writing-e-mail.jpg",
         title: "🗂 Complaint Gets Logged",
         description: "Your complaint is categorized and sent to the concerned transport authority.",
     },
     {
-        src: "/nelia-iv-7j9X536STZA-unsplash.jpg",
+        src: "/woman-wearing-string-finger-reminder.jpg",
         title: "📍 Track Complaint Status",
         description: "Get a unique complaint ID to check real-time updates and resolution status.",
     },
@@ -152,6 +148,7 @@ function StyleSheet() {
             justify-content: center;
             align-items: center;
             position: relative;
+                
         }
 
         .img-container > div {
@@ -160,10 +157,11 @@ function StyleSheet() {
             margin: 20px;
             background: var(--white);
             overflow: hidden;
+            margin:0 auto
         }
 
         .img-container img {
-            width: 500px;
+            width: 600px;
             height: 500px;
             border-radius: 20px;
         }
@@ -279,10 +277,11 @@ function StyleSheet() {
             }
         }
 
-.img-wrapper{
-width:500px!important;
-height:500px!important;
-}
+                .img-wrapper{
+                width:600px!important;
+                height:500px!important;
+                 
+                }
 
 
     `}</style>
