@@ -9,6 +9,8 @@ import { useState } from "react"
 import Image from "next/image"
 import { MagicCard } from "./magicui/magic-card"
 import { useTheme } from "next-themes"
+import { toast } from "sonner"
+import { createUser, loginUser } from "@/actions/user"
 
 export function AuthForm({
   className,
@@ -16,6 +18,43 @@ export function AuthForm({
 }: React.ComponentProps<"div">) {
   const [isLogin, setIsLogin] = useState(true)
   const { theme } = useTheme();
+
+
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+
+
+      if (isLogin) {
+        const formData = {
+          email: e.currentTarget.email.value,
+          password: e.currentTarget.password.value,
+        };
+        await loginUser(formData);
+        toast.success("Logged in successfully");
+      } else {
+        const formData = {
+          email: e.currentTarget.email.value,
+          name: (e.currentTarget.elements.namedItem("name") as HTMLInputElement)?.value,
+          phone: e.currentTarget.phone?.value,
+          anonymous: e.currentTarget.anonymous?.checked,
+        };
+        await createUser(formData);
+        toast.success("User created");
+      }
+
+      toast.success(isLogin ? "Logged in successfully" : "User created");
+
+
+      window.location.href = "/";
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6 w-full  rounded-lg ", className)} {...props}>
       <MagicCard
@@ -24,7 +63,7 @@ export function AuthForm({
       >
         <Card className="overflow-hidden p-0 border-0 bg-transparent">
           <CardContent className="grid p-0 md:grid-cols-2">
-            <form className="p-6 md:p-8">
+            <form className="p-6 md:p-8" onSubmit={onSubmit}>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-2xl font-bold">

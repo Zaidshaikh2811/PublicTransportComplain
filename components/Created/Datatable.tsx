@@ -13,7 +13,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown, MoreHorizontal } from "lucide-react"
 
 
 import {
@@ -36,125 +36,85 @@ import {
 } from "@/components/ui/table"
 import { Button } from "../ui/button"
 
-const data: Payment[] = [
-    {
-        id: "m5gr84i9",
-        name: "John Doe",
-        date: "2025-05-10",
-        category: "Subscription",
-        description: "Monthly plan renewal",
-        amount: 316,
-        status: "success",
-        email: "ken99@example.com",
-    },
-    {
-        id: "3u1reuv4",
-        name: "Alice Smith",
-        date: "2025-05-08",
-        category: "One-time",
-        description: "Consultation fee",
-        amount: 242,
-        status: "success",
-        email: "Abe45@example.com",
-    },
-]
 
-export type Payment = {
-    id: string
-    name: string
-    date: string
-    category: string
+
+
+export type Complaint = {
+    _id: string
+    transportMode: string
+    issueType: string
+    vehicleNumber: string
+    location: string
+    dateOfIncident: string
     description: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
+    isAnonymous: boolean
+    contactName: string
+    contactInfo: string
+    status: "pending" | "processing" | "resolved"
+    createdAt: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+
+export const columns: ColumnDef<Complaint>[] = [
     {
-        accessorKey: "id",
-        header: "ID",
+        accessorKey: "transportMode",
+        header: "Mode",
     },
     {
-        accessorKey: "name",
-        header: "Name",
+        accessorKey: "issueType",
+        header: "Issue Type",
     },
-    // {
-    //     id: "select",
-    //     header: ({ table }) => (
-    //         <Checkbox
-    //             checked={
-    //                 table.getIsAllPageRowsSelected() ||
-    //                 (table.getIsSomePageRowsSelected() && "indeterminate")
-    //             }
-    //             onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //             aria-label="Select all"
-    //         />
-    //     ),
-    //     cell: ({ row }) => (
-    //         <Checkbox
-    //             checked={row.getIsSelected()}
-    //             onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //             aria-label="Select row"
-    //         />
-    //     ),
-    //     enableSorting: false,
-    //     enableHiding: false,
-    // },
+    {
+        accessorKey: "vehicleNumber",
+        header: "Vehicle No.",
+    },
+    {
+        accessorKey: "location",
+        header: "Location",
+    },
+    {
+        accessorKey: "dateOfIncident",
+        header: "Incident Date",
+        cell: ({ row }) => (
+            <div>{new Date(row.getValue("dateOfIncident")).toLocaleDateString()}</div>
+        ),
+    },
     {
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("status")}</div>
+            <span className="capitalize">{row.getValue("status")}</span>
         ),
     },
     {
-        accessorKey: "email",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Email
-                    <ArrowUpDown />
-                </Button>
-            )
-        },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+        accessorKey: "contactName",
+        header: "Contact Name",
     },
     {
-        accessorKey: "category",
-        header: "Category",
-    },
-    {
-        accessorKey: "description",
-        header: "Description",
+        accessorKey: "contactInfo",
+        header: "Contact Info",
     },
     {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
-            const payment = row.original
-
+            const complaint = row.original
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
                             <MoreHorizontal />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(payment.id)}
+                            onClick={() => navigator.clipboard.writeText(complaint._id)}
                         >
-                            Copy payment ID
+                            Copy ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>View payment details</DropdownMenuItem>
+                        <DropdownMenuItem>View Details</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
@@ -162,7 +122,10 @@ export const columns: ColumnDef<Payment>[] = [
     },
 ]
 
-export function DataTableDemo() {
+
+
+
+export function DataTableDemo({ data }: { data: Complaint[] }) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []

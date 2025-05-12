@@ -7,129 +7,129 @@ import { useRef } from "react"
 
 
 function ImageComp({
-    id,
-    src
+  id,
+  src
 }: {
-    id: number
-    src: string
-    title: string
-    description: string
+  id: number
+  src: string
+  title: string
+  description: string
 }) {
-    const ref = useRef(null)
+  const ref = useRef(null)
 
 
 
-    // Get heading text based on image id
-    const getHeadingText = () => {
-        switch (id) {
-            case 1:
-                return "Report a Problem"
-            case 2:
-                return "Complaint Gets Logged"
-            case 3:
-                return "Track Complaint Status"
-        }
+  // Get heading text based on image id
+  const getHeadingText = () => {
+    switch (id) {
+      case 1:
+        return "Report a Problem"
+      case 2:
+        return "Complaint Gets Logged"
+      case 3:
+        return "Track Complaint Status"
     }
+  }
 
-    // Get subheading text based on image id
-    const getSubheadingText = () => {
-        switch (id) {
-            case 1:
-                return "Select the category, location, and describe the issue anonymously or with contact."
-            case 2:
-                return "Your complaint is categorized and sent to the concerned transport authority."
-            case 3:
-                return "Get a unique complaint ID to check real-time updates and resolution status."
+  // Get subheading text based on image id
+  const getSubheadingText = () => {
+    switch (id) {
+      case 1:
+        return "Select the category, location, and describe the issue anonymously or with contact."
+      case 2:
+        return "Your complaint is categorized and sent to the concerned transport authority."
+      case 3:
+        return "Get a unique complaint ID to check real-time updates and resolution status."
 
-        }
     }
+  }
 
-    return (
-        <section className="img-container mx-auto">
-            <motion.div
-                className="section-heading"
-                initial={{ opacity: 0, y: -30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: false, margin: "-100px 0px -100px 0px" }}
-            >
-                <motion.h1
-                    initial={{ letterSpacing: "-5px" }}
-                    whileInView={{ letterSpacing: "0px" }}
-                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    viewport={{ once: false, margin: "-100px 0px -100px 0px" }}
+  return (
+    <section className="img-container mx-auto">
+      <motion.div
+        className="section-heading"
+        initial={{ opacity: 0, y: -30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 30 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: false, margin: "-100px 0px -100px 0px" }}
+      >
+        <motion.h1
+          initial={{ letterSpacing: "-5px" }}
+          whileInView={{ letterSpacing: "0px" }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          viewport={{ once: false, margin: "-100px 0px -100px 0px" }}
 
-                >
-                    {getHeadingText()}
-                </motion.h1>
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 0.8 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    viewport={{ once: false, margin: "-100px 0px -100px 0px" }}
-                >
-                    {getSubheadingText()}
-                </motion.p>
-            </motion.div>
+        >
+          {getHeadingText()}
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.8 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: false, margin: "-100px 0px -100px 0px" }}
+        >
+          {getSubheadingText()}
+        </motion.p>
+      </motion.div>
 
-            <div ref={ref} className="img-wrapper">
-                <Image width={500} height={600} src={src} alt="A London skyscraper" />
-            </div>
-            {/* <motion.h2
+      <div ref={ref} className="img-wrapper">
+        <Image width={500} height={600} src={src} alt="A London skyscraper" />
+      </div>
+      {/* <motion.h2
                 // Hide until scroll progress is measured
                 initial={{ visibility: "hidden" }}
                 animate={{ visibility: "visible" }}
                 style={{ y }}
             >{`#00${id}`}</motion.h2> */}
-        </section>
-    )
+    </section>
+  )
 }
 
 const content = [
-    {
-        src: "/pensive-businessman-talking-phone-while-commuting-by-bus.jpg",
-        title: "✅ Report a Problem",
-        description: "Select the category, location, and describe the issue anonymously or with contact.",
-    },
-    {
-        src: "/man-is-writing-e-mail.jpg",
-        title: "🗂 Complaint Gets Logged",
-        description: "Your complaint is categorized and sent to the concerned transport authority.",
-    },
-    {
-        src: "/woman-wearing-string-finger-reminder.jpg",
-        title: "📍 Track Complaint Status",
-        description: "Get a unique complaint ID to check real-time updates and resolution status.",
-    },
+  {
+    src: "/pensive-businessman-talking-phone-while-commuting-by-bus.jpg",
+    title: "✅ Report a Problem",
+    description: "Select the category, location, and describe the issue anonymously or with contact.",
+  },
+  {
+    src: "/man-is-writing-e-mail.jpg",
+    title: "🗂 Complaint Gets Logged",
+    description: "Your complaint is categorized and sent to the concerned transport authority.",
+  },
+  {
+    src: "/woman-wearing-string-finger-reminder.jpg",
+    title: "📍 Track Complaint Status",
+    description: "Get a unique complaint ID to check real-time updates and resolution status.",
+  },
 ]
 
 
 
 export default function Parallax() {
-    const { scrollYProgress } = useScroll()
-    const scaleX = useSpring(scrollYProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001,
-    })
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  })
 
-    return (
-        <div id="example">
+  return (
+    <div id="example">
 
-            {content.map((item, index) => (
-                <ImageComp
-                    key={index}
-                    id={index + 1}
-                    src={item.src}
-                    title={item.title}
-                    description={item.description}
-                />
-            ))}
-            <motion.div className="progress" style={{ scaleX }} />
-            <StyleSheet />
-        </div>
-    )
+      {content.map((item, index) => (
+        <ImageComp
+          key={index}
+          id={index + 1}
+          src={item.src}
+          title={item.title}
+          description={item.description}
+        />
+      ))}
+      <motion.div className="progress" style={{ scaleX }} />
+      <StyleSheet />
+    </div>
+  )
 }
 
 /**
@@ -137,8 +137,8 @@ export default function Parallax() {
  */
 
 function StyleSheet() {
-    return (
-        <style>{`
+  return (
+    <style>{`
         .img-container {
           height: 100vh;
           scroll-snap-align: start;
@@ -212,6 +212,9 @@ function StyleSheet() {
         }
   
         @media (max-width: 768px) {
+        .img-container {
+          height: fit-content;
+        }
           .section-heading h1 {
             font-size: 2rem;
           }
@@ -233,7 +236,8 @@ function StyleSheet() {
           .img-wrapper img {
             border-radius: 15px;
           }
+           
         }
       `}</style>
-    );
+  );
 }
