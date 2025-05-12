@@ -9,11 +9,12 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { DatePickerDemo } from '@/components/Created/DatePicker'
+
 import { Switch } from '@/components/ui/switch'
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Metadata } from 'next'
+
 
 export const metadata: Metadata = {
     title: " Create Complaint",
@@ -79,7 +80,8 @@ const Page = () => {
                     <div className="grid sm:grid-cols-2 gap-4">
                         <div className="grid gap-1.5">
                             <Label htmlFor="date">Date of Incident</Label>
-                            <DatePickerDemo />
+                            {/* <DatePickerDemo /> */}
+                            <input type="date" className='border   border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-2.5 py-0.5 ' />
                         </div>
                         <div className="grid gap-1.5">
                             <Label htmlFor="description">Description</Label>
@@ -117,6 +119,7 @@ const Page = () => {
                     </div>
                 </CardContent>
             </Card>
+
         </div>
     )
 }
