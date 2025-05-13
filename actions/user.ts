@@ -85,9 +85,19 @@ export async function loginUser(formData: LoginUserFormData) {
             { expiresIn: "1h" }
         );
 
-        return { success: true, message: "Logged in successfully", token };
+        return { success: true, message: "Logged in successfully", token, user: email };
     } catch (error) {
         console.error(error);
         return { success: false, error: "Server error" };
     }
 }
+
+
+export const logoutUser = async () => {
+    try {
+        return { success: true, message: "Logged out successfully" };
+    } catch (error) {
+        console.error(error);
+        return { success: false, error: "Server error" };
+    }
+};

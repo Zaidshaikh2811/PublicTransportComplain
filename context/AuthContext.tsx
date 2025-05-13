@@ -1,37 +1,65 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface User {
-    name: string;
-    email: string;
-}
+import React, { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie"; // use this for cookie handling
+import LoadingPage from "@/app/loading";
+
 
 interface AuthContextType {
-    user: User | null;
-    login: (userData: User) => void;
+    user: string | null;
+    login: (userData: string, token: string) => void;
     logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<string | null>(null);
+
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("authUser");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        try {
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+            }
+        } catch (error) {
+            console.log(error);
+
+            localStorage.removeItem("user");
+        } finally {
+            setLoading(false);
         }
     }, []);
 
-    const login = (userData: User) => {
-        localStorage.setItem("authUser", JSON.stringify(userData));
+    if (loading) return <LoadingPage />;
+
+    const login = (userData: string, token: string) => {
+        localStorage.setItem("user", JSON.stringify(userData));
+        if (token) {
+
+
+            Cookies.set("auth_token", token, {
+                expires: 1,         // 1 day
+                path: "/",          // Accessible across entire site
+                sameSite: "strict",  // CSRF protection
+                secure: process.env.NODE_ENV === "production" // HTTPS only in production
+            });
+        }
         setUser(userData);
     };
-
     const logout = () => {
-        localStorage.removeItem("authUser");
+        localStorage.removeItem("user");
+
+
+        Cookies.remove("auth_token", {
+            path: "/",
+            sameSite: "strict",
+            secure: process.env.NODE_ENV === "production"
+        });
         setUser(null);
+        window.location.reload();
     };
 
     return (
@@ -41,8 +69,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
+// ✅ Custom hook for consuming AuthContext
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
-    if (!context) throw new Error("useAuth must be used within AuthProvider");
+    if (context === undefined) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
     return context;
 };

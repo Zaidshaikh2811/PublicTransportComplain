@@ -15,7 +15,8 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
-import axios from 'axios';
+
+import { saveComplaint } from '@/actions/complaint';
 
 
 const Page = () => {
@@ -44,10 +45,11 @@ const Page = () => {
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
+        if (e.target.files && e.target.files.length > 0) {
+            const filesArray = Array.from(e.target.files);
             setFormData(prev => ({
                 ...prev,
-                mediaFiles: Array.from(e.target.files as FileList)
+                mediaFiles: filesArray
             }));
         }
     };
@@ -73,41 +75,57 @@ const Page = () => {
         setSuccess(false);
 
         try {
-            // Validate required fields
-            if (!formData.transportMode || !formData.vehicleNumber || !formData.location ||
-                !formData.dateOfIncident || !formData.description) {
+            const {
+                transportMode,
+
+                vehicleNumber,
+                location,
+                dateOfIncident,
+                description,
+                isAnonymous,
+                contactName,
+                contactInfo,
+                mediaFiles
+            } = formData;
+
+
+            // Client-side validation
+            if (!transportMode || !vehicleNumber || !location || !dateOfIncident || !description) {
                 throw new Error('Please fill in all required fields');
             }
 
-            // Prepare FormData for file upload
-            const formDataToSend = new FormData();
-            formDataToSend.append('transportMode', formData.transportMode);
-            formDataToSend.append('issueType', formData.issueType);
-            formDataToSend.append('vehicleNumber', formData.vehicleNumber);
-            formDataToSend.append('location', formData.location);
-            formDataToSend.append('dateOfIncident', formData.dateOfIncident);
-            formDataToSend.append('description', formData.description);
-            formDataToSend.append('isAnonymous', formData.isAnonymous.toString());
+            if (!isAnonymous) {
+                if (!contactName || !contactInfo) {
+                    throw new Error('Contact name and info are required');
+                }
 
-            if (!formData.isAnonymous) {
-                formDataToSend.append('contactName', formData.contactName);
-                formDataToSend.append('contactInfo', formData.contactInfo);
+                const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo);
+                const isPhone = /^\d{10}$/.test(contactInfo);
+
+                if (!isEmail && !isPhone) {
+                    throw new Error('Contact info must be a valid email or phone number');
+                }
             }
 
-            // Append files
-            formData.mediaFiles.forEach(file => {
-                formDataToSend.append('mediaFiles', file);
-            });
-            const response = await axios.post('/api/complaint', formDataToSend);
-
-            if (!response.data.success) {
-
-                throw new Error('Failed to submit complaint');
+            // Optional: validate files (e.g. size/type)
+            for (const file of mediaFiles) {
+                if (file.size > 5 * 1024 * 1024) {
+                    throw new Error('File size must be under 5MB');
+                }
             }
 
 
+
+            // Send to server
+            const response = await saveComplaint(formData);
+
+            if (!response.success) {
+                throw new Error(response.error || 'Failed to submit complaint');
+            }
 
             setSuccess(true);
+            toast.success('Complaint submitted successfully');
+
             // Reset form
             setFormData({
                 transportMode: '',
@@ -121,14 +139,16 @@ const Page = () => {
                 contactInfo: '',
                 mediaFiles: []
             });
-            toast.success('Event has been created')
+
         } catch (err) {
             console.error('Submission error:', err);
             setError(err instanceof Error ? err.message : 'Something went wrong');
+            toast.error(err instanceof Error ? err.message : 'Something went wrong');
         } finally {
             setIsSubmitting(false);
         }
     };
+
 
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -251,16 +271,28 @@ const Page = () => {
                         {/* File Upload */}
                         <div className="grid gap-1.5 mb-4">
                             <Label htmlFor="upload">Upload Image/Video</Label>
-                            <Input
+                            {/* <Input
                                 id="upload"
                                 type="file"
                                 multiple
                                 accept="image/*,video/*"
                                 onChange={handleFileChange}
+                            /> */}
+                            <Input
+                                id="media-upload"
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleFileChange}
                             />
                             {formData.mediaFiles.length > 0 && (
-                                <div className="text-sm text-gray-500">
-                                    {formData.mediaFiles.length} file(s) selected
+                                <div className="text-sm text-gray-500 mt-2">
+                                    <p>Selected files:</p>
+                                    <ul className="list-disc pl-5">
+                                        {formData.mediaFiles.map((file, index) => (
+                                            <li key={index}>{file.name} ({(file.size / 1024).toFixed(2)} KB)</li>
+                                        ))}
+                                    </ul>
                                 </div>
                             )}
                         </div>
@@ -289,8 +321,9 @@ const Page = () => {
                                     />
                                 </div>
                                 <div className="grid gap-1.5">
-                                    <Label htmlFor="contact-info">Email / Phone</Label>
+                                    <Label htmlFor="contact-info">Email  </Label>
                                     <Input
+                                        type='email'
                                         id="contact-info"
                                         name="contactInfo"
                                         value={formData.contactInfo}

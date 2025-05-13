@@ -1,6 +1,8 @@
+"use server";
 import { connectToDatabase } from '@/lib/mongodb';
 import Complaint from '@/lib/models/Complaint';
 import { v2 as cloudinary } from 'cloudinary';
+import { sendComplaintRegisteredEmail } from '@/lib/mail/complaintRegisteredEmail';
 
 
 // Cloudinary configuration
@@ -48,36 +50,74 @@ export async function uploadToCloudinary(file: File): Promise<{ url: string; pub
 
 // Save a complaint in MongoDB
 export async function saveComplaint(payload: ComplaintPayload) {
-    await connectToDatabase();
+    try {
+        await connectToDatabase();
+        console.log(
+            payload);
 
-    const mediaFiles = [];
+        // Basic validation
+        if (!payload.transportMode || !payload.vehicleNumber || !payload.location || !payload.dateOfIncident || !payload.description) {
+            throw new Error("Missing required complaint fields");
+        }
 
-    if (payload.mediaFiles && payload.mediaFiles.length > 0) {
-        for (const file of payload.mediaFiles) {
-            if (file.size > 0) {
-                const uploaded = await uploadToCloudinary(file);
-                mediaFiles.push(uploaded);
+        if (!payload.isAnonymous) {
+            if (!payload.contactName || !payload.contactInfo) {
+                throw new Error("Contact name and info are required for non-anonymous complaints");
+            }
+
+            // Simple email/phone validation (adjust as needed)
+            const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.contactInfo);
+            const isValidPhone = /^\d{10}$/.test(payload.contactInfo);
+
+            if (!isValidEmail && !isValidPhone) {
+                throw new Error("Contact info must be a valid email or 10-digit phone number");
             }
         }
-    }
 
-    const complaint = new Complaint({
-        transportMode: payload.transportMode,
-        issueType: payload.issueType,
-        vehicleNumber: payload.vehicleNumber,
-        location: payload.location,
-        dateOfIncident: new Date(payload.dateOfIncident),
-        description: payload.description,
-        mediaFiles,
-        isAnonymous: payload.isAnonymous,
-        contactName: payload.isAnonymous ? undefined : payload.contactName,
-        contactInfo: payload.isAnonymous ? undefined : payload.contactInfo,
-        status: 'pending',
-    });
-    // await sendComplaintRegisteredEmail(user.email, complaint._id.toString());
-    await complaint.save();
-    return complaint;
+        const mediaFiles = [];
+
+        if (payload.mediaFiles && payload.mediaFiles.length > 0) {
+            for (const file of payload.mediaFiles) {
+                if (file.size > 0) {
+                    const uploaded = await uploadToCloudinary(file);
+                    mediaFiles.push(uploaded);
+                }
+            }
+        }
+
+        const complaint = new Complaint({
+            transportMode: payload.transportMode,
+            issueType: payload.issueType,
+            vehicleNumber: payload.vehicleNumber,
+            location: payload.location,
+            dateOfIncident: new Date(payload.dateOfIncident),
+            description: payload.description,
+            isAnonymous: payload.isAnonymous,
+            contactName: payload.contactName,
+            contactInfo: payload.contactInfo,
+            mediaFiles,
+            status: "pending",
+        });
+
+        await complaint.save();
+
+        // Send mail only if not anonymous
+        if (!payload.isAnonymous && payload.contactInfo) {
+            await sendComplaintRegisteredEmail(payload.contactInfo, complaint._id.toString());
+        }
+
+        return { success: true };
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error saving complaint:", error);
+            return { success: false, error: error.message || "Internal Server Error" };
+        } else {
+            console.error("Unknown error:", error);
+            return { success: false, error: "Internal Server Error" };
+        }
+    }
 }
+
 
 // Fetch all complaints
 export async function getAllComplaints() {

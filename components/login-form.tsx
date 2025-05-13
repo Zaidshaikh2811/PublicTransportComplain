@@ -11,8 +11,12 @@ import { MagicCard } from "./magicui/magic-card"
 import { useTheme } from "next-themes"
 import { toast } from "sonner"
 import { createUser, loginUser } from "@/actions/user"
-import Cookies from 'js-cookie';
+
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
+
+// Define or import the User type
+
 
 export function AuthForm({
   className,
@@ -21,7 +25,7 @@ export function AuthForm({
   const [isLogin, setIsLogin] = useState(true)
   const { theme } = useTheme();
   const router = useRouter()
-
+  const { login } = useAuth()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,9 +39,19 @@ export function AuthForm({
         const data = await loginUser({ email, password });
 
         if (data.success) {
-          Cookies.set("auth_token", data.token ?? "", { expires: 1 });
+
+
+
+          if (data.user) {
+
+
+
+            login(data.user, data.token);
+          } else {
+            toast.error("User data is missing");
+          }
           toast.success("Logged in successfully");
-          router.replace("/");
+          router.push("/")
         } else {
           toast.error(data.error || "Invalid credentials");
         }
@@ -60,7 +74,7 @@ export function AuthForm({
 
         if (response.success) {
           toast.success("User created successfully");
-          router.replace("/");
+
         } else {
           toast.error(response.error || "Failed to create user");
         }
