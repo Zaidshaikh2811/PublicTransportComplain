@@ -28,15 +28,18 @@ export const metadata: Metadata = {
     description: "Report a problem. We'll get back to you.",
 };
 
+
+
 interface Props {
-    searchParams: {
-        page?: string
-        limit?: string
-    }
+    searchParams?: {
+        page?: string;
+        limit?: string;
+    };
 }
+
 export default async function ComplaintsPage({ searchParams }: Props) {
-    const page = parseInt(searchParams.page ?? "1")
-    const limit = parseInt(searchParams.limit ?? "10")
+    const page = parseInt(searchParams?.page ?? "1")
+    const limit = parseInt(searchParams?.limit ?? "10")
 
     const result = await getPaginatedComplaints(page, limit)
 
