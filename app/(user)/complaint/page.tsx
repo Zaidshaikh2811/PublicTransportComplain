@@ -7,6 +7,7 @@ import { Metadata } from 'next';
 import { toast } from 'sonner';
 import { DataTableDemo } from '@/components/Created/DataTableDemo';
 import { complaintColumns } from '@/components/Created/ComplainColoum';
+import Link from 'next/link';
 
 
 type Complaint = {
@@ -30,7 +31,13 @@ export const metadata: Metadata = {
     description: "Report a problem. We'll get back to you.",
 };
 
-const page = async () => {
+type PageProps = {
+    searchParams: {
+        page?: string;
+    };
+};
+
+const page = async ({ searchParams }: PageProps) => {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth_token')?.value;
 
@@ -64,9 +71,11 @@ const page = async () => {
         return redirect('/login');
     }
 
-    const complaints = await getAllComplaints({ email });
+    const pageNum = parseInt(searchParams.page || '1');
+    const { data, totalPages } = await getAllComplaints({ email, page: pageNum, limit: 10 });
 
-    if (!complaints?.data || complaints.data.length === 0) {
+
+    if (!data || data.length === 0) {
         return (
             <div className="container mx-auto mt-12">
                 <h1 className="text-2xl font-semibold mb-6">Your Complaints</h1>
@@ -76,7 +85,7 @@ const page = async () => {
     }
 
     // Transform the data to match what your table expects
-    const formattedComplaints: (Complaint & { id: string })[] = complaints.data.map((complaint) => ({
+    const formattedComplaints: (Complaint & { id: string })[] = data.map((complaint) => ({
         id: complaint?._id?.toString() || "", // 👈 add this line
         _id: complaint?._id?.toString() || "",
         transportMode: complaint.transportMode,
@@ -102,6 +111,18 @@ const page = async () => {
                 columns={complaintColumns}
                 data={formattedComplaints}
             />
+            <div className="flex justify-center mt-6 space-x-2">
+                {Array.from({ length: totalPages }, (_, i) => (
+                    <Link
+                        key={i}
+                        href={`?page=${i + 1}`}
+                        className={`px-4 py-2 border rounded ${i + 1 === pageNum ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'
+                            }`}
+                    >
+                        {i + 1}
+                    </Link>
+                ))}
+            </div>
         </div>
     );
 };

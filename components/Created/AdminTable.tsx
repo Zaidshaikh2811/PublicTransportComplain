@@ -9,7 +9,7 @@ import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
+
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
@@ -106,7 +106,17 @@ export const columns: ColumnDef<Complaint>[] = [
     },
 ]
 
-export function DataTableDemo({ data }: { data: Complaint[] }) {
+export function DataTableDemo({ data, pagination }: {
+    data: Complaint[], pagination: {
+        totalItems: number
+        currentPage: number
+        totalPages: number
+        pageSize: number
+    }
+}) {
+
+    console.log(pagination);
+
 
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -118,27 +128,54 @@ export function DataTableDemo({ data }: { data: Complaint[] }) {
         router.push(`/dashboard/${complaintId}`)
     }
 
+
+    const [pageSize, setPageSize] = React.useState(pagination.pageSize)
+    const [pageIndex, setPageIndex] = React.useState(pagination.currentPage - 1) // 0-based index
+
+    const updateUrlParams = (newPage: number, newSize: number) => {
+        const params = new URLSearchParams(window.location.search)
+        params.set("page", String(newPage))
+        params.set("limit", String(newSize))
+        router.push(`?${params.toString()}`)
+    }
+
+    React.useEffect(() => {
+        updateUrlParams(pageIndex + 1, pageSize)
+    }, [pageIndex, pageSize])
+
+
     const table = useReactTable({
         data,
         columns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        onGlobalFilterChange: setGlobalFilter,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
+        pageCount: pagination.totalPages, // manual page count from server
+        manualPagination: true,           // ✅ important
         state: {
+            pagination: {
+                pageIndex,
+                pageSize,
+            },
             sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
             globalFilter,
         },
+        onPaginationChange: (updater) => {
+            const newState = typeof updater === "function"
+                ? updater({ pageIndex, pageSize })
+                : updater
+            setPageIndex(newState.pageIndex)
+            setPageSize(newState.pageSize)
+        },
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        onGlobalFilterChange: setGlobalFilter,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
     })
-
     // Status filter options
     const statuses = [
         { value: "pending", label: "Pending" },

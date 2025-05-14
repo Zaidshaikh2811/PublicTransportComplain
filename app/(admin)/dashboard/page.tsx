@@ -3,6 +3,7 @@
 import { getPaginatedComplaints } from "@/actions/admin"
 import Chart from "@/components/Created/AdminChart/Chart"
 import { DataTableDemo } from "@/components/Created/AdminTable"
+import { Metadata } from "next"
 
 // Type definition for a complaint
 type Complaint = {
@@ -22,9 +23,20 @@ type Complaint = {
     contactInfo: string
 }
 
-export default async function ComplaintsPage() {
-    const page = 1
-    const limit = 10
+export const metadata: Metadata = {
+    title: "Dashboard - Public Transport Complaints",
+    description: "Report a problem. We'll get back to you.",
+};
+
+interface Props {
+    searchParams: {
+        page?: string
+        limit?: string
+    }
+}
+export default async function ComplaintsPage({ searchParams }: Props) {
+    const page = parseInt(searchParams.page ?? "1")
+    const limit = parseInt(searchParams.limit ?? "10")
 
     const result = await getPaginatedComplaints(page, limit)
 
@@ -35,6 +47,9 @@ export default async function ComplaintsPage() {
             </div>
         )
     }
+
+
+    const pagination = result.pagination
 
     const complaints: Complaint[] =
         ((result.data as unknown) as Complaint[])?.map((item) => ({
@@ -63,7 +78,7 @@ export default async function ComplaintsPage() {
 
             <section>
                 <h2 className="text-2xl font-semibold mb-4">All Complaints</h2>
-                <DataTableDemo data={complaints} />
+                {pagination && <DataTableDemo data={complaints} pagination={pagination} />}
             </section>
         </div>
     )

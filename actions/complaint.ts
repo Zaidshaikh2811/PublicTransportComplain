@@ -119,22 +119,44 @@ export async function saveComplaint(payload: ComplaintPayload) {
 
 
 // Fetch all complaints
-export async function getAllComplaints({ email }: { email: string }) {
+// Updated getAllComplaints
+export async function getAllComplaints({
+    email,
+    page = 1,
+    limit = 10,
+}: { email: string; page?: number; limit?: number }) {
     try {
-
-
         await connectToDatabase();
-        const resp = await Complaint.find({}).where({ isAnonymous: false, contactInfo: email })
-            .sort({ dateOfIncident: -1 })
-            .select('transportMode issueType vehicleNumber location dateOfIncident description status')
-            .lean();;
 
+        const filter = {
+            isAnonymous: false,
+            contactInfo: email,
+        };
 
-        return { success: true, data: resp };
+        const skip = (page - 1) * limit;
+
+        const [data, total] = await Promise.all([
+            Complaint.find(filter)
+                .sort({ dateOfIncident: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean(),
+            Complaint.countDocuments(filter),
+        ]);
+
+        return {
+            success: true,
+            data,
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        };
     } catch (error) {
         return { success: false, error };
     }
 }
+
 
 
 export const getSpecificComplain = async (id: string) => {
