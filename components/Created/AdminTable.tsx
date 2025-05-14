@@ -35,6 +35,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "../ui/badge"
 import { useRouter } from "next/navigation"
 
+
+
+
 export type Complaint = {
     _id: string;
     transportMode: string;
@@ -115,7 +118,7 @@ export function DataTableDemo({ data, pagination }: {
     }
 }) {
 
-    console.log(pagination);
+
 
 
     const [sorting, setSorting] = React.useState<SortingState>([])

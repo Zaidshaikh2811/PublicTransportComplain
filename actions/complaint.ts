@@ -3,6 +3,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Complaint from '@/lib/models/Complaint';
 import { v2 as cloudinary } from 'cloudinary';
 import { sendComplaintRegisteredEmail } from '@/lib/mail/complaintRegisteredEmail';
+import { revalidatePath } from 'next/cache';
 
 
 // Cloudinary configuration
@@ -104,7 +105,7 @@ export async function saveComplaint(payload: ComplaintPayload) {
         if (!payload.isAnonymous && payload.contactInfo) {
             await sendComplaintRegisteredEmail(payload.contactInfo, complaint._id.toString());
         }
-
+        revalidatePath('/');
         return { success: true };
     } catch (error: unknown) {
         if (error instanceof Error) {
