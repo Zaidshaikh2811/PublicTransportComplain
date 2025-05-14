@@ -35,6 +35,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "../ui/button"
+import Link from "next/link"
 
 
 
@@ -114,7 +115,7 @@ export const columns: ColumnDef<Complaint>[] = [
                             Copy ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                        <DropdownMenuItem> <Link href={`/complaint/${complaint._id}`}>View Details </Link></DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
@@ -157,10 +158,10 @@ export function DataTableDemo({ data }: { data: Complaint[] }) {
         <div className="w-full">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    placeholder="Filter by issue type..."
+                    value={(table.getColumn("issueType")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
+                        table.getColumn("issueType")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />

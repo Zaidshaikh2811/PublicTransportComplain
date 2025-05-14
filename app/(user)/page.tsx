@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <main className="bg-background text-foreground min-h-screen">
       {/* Hero Section */}
-      <section className="container mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+      <section className="  container mx-auto mt-10 px-4 sm:px-6 lg:px-8">
         <div
           className="h-[500px] sm:h-[550px] md:h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden bg-cover bg-center bg-no-repeat relative shadow-xl"
           style={{

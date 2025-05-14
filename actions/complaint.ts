@@ -120,13 +120,25 @@ export async function saveComplaint(payload: ComplaintPayload) {
 
 
 // Fetch all complaints
-export async function getAllComplaints() {
+export async function getAllComplaints(email: { email: string }) {
     try {
 
+
         await connectToDatabase();
-        const resp = await Complaint.find({}).sort({ dateOfIncident: -1 });
+        const resp = await Complaint.find({}).where({ isAnonymous: false, contactInfo: email }).sort({ dateOfIncident: -1 });
         return { success: true, data: resp };
     } catch (error) {
         return { success: false, error };
     }
 }
+
+
+export const getSpecificComplain = async (id: string) => {
+    try {
+        await connectToDatabase();
+        const resp = await Complaint.findById(id);
+        return { success: true, data: resp };
+    } catch (error) {
+        return { success: false, error };
+    }
+} 

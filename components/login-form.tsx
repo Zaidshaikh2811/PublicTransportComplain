@@ -26,10 +26,18 @@ export function AuthForm({
   const { theme } = useTheme();
   const router = useRouter()
   const { login } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
 
+
+  const resetForm = () => {
+    const form = document.getElementById("auth-form") as HTMLFormElement
+    if (form) {
+      form.reset()
+    }
+  }
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setIsLoading(true)
     const form = e.currentTarget;
     const email = form.email.value;
     const password = form.password.value;
@@ -47,11 +55,12 @@ export function AuthForm({
 
 
             login(data.user, data.token);
+            toast.success("Logged in successfully");
+            resetForm()
+            router.push("/")
           } else {
             toast.error("User data is missing");
           }
-          toast.success("Logged in successfully");
-          router.push("/")
         } else {
           toast.error(data.error || "Invalid credentials");
         }
@@ -74,6 +83,7 @@ export function AuthForm({
 
         if (response.success) {
           toast.success("User created successfully");
+          setIsLogin(true);
 
         } else {
           toast.error(response.error || "Failed to create user");
@@ -82,6 +92,9 @@ export function AuthForm({
     } catch (error) {
       console.error(error);
       toast.error("Unexpected error occurred");
+    }
+    finally {
+      setIsLoading(false)
     }
   };
 
@@ -149,7 +162,15 @@ export function AuthForm({
                 )}
 
                 <Button type="submit" className="w-full">
-                  {isLogin ? "Login" : "Sign Up"}
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Processing...
+                    </span>
+                  ) : isLogin ? "Login" : "Sign Up"}
                 </Button>
 
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
@@ -225,7 +246,7 @@ export function AuthForm({
               <Image
                 src={isLogin ? "/login.jpg" : "/signup.jpg"}
                 alt="Image"
-                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5]"
                 width={500}
                 height={500}
               />

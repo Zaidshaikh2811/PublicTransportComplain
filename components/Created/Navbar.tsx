@@ -19,8 +19,8 @@ import Link from "next/link";
 const NAV_LINKS = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { name: "Create Complaint", href: "/create-complaint" },
-    { name: "Track Complaints", href: "/track-complaints" },
+    { name: "Create Complaint", href: "/complaint/create" },
+    { name: "Track Complaints", href: "/complaint" },
     { name: "Contact", href: "/contact" },
 ];
 

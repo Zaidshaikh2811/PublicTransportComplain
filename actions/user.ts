@@ -33,6 +33,7 @@ export async function createUser(formData: CreateUserFormData) {
         if (existingUser) {
             return { success: false, error: "Email already in use" };
         }
+        console.log(name, email, phone, password, anonymous);
 
         // 🔐 Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -44,6 +45,7 @@ export async function createUser(formData: CreateUserFormData) {
             anonymous,
             password: hashedPassword
         });
+        console.log(newUser);
 
         await newUser.save();
 
@@ -75,8 +77,12 @@ export async function loginUser(formData: LoginUserFormData) {
 
         const user = await User.findOne({ email });
         if (!user) return { success: false, error: "User not found" };
+        console.log(email, password);
+        console.log(user.password);
 
         const isPasswordValid = await bcrypt.compare(password, user.password || "");
+        console.log(isPasswordValid);
+
         if (!isPasswordValid) return { success: false, error: "Invalid credentials" };
 
         const token = jwt.sign(
