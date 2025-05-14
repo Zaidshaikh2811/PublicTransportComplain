@@ -30,16 +30,11 @@ export const metadata: Metadata = {
 
 
 
-interface Props {
-    searchParams?: {
-        page?: string;
-        limit?: string;
-    };
-}
 
-export default async function ComplaintsPage({ searchParams }: Props) {
-    const page = parseInt(searchParams?.page ?? "1")
-    const limit = parseInt(searchParams?.limit ?? "10")
+export default async function ComplaintsPage({ searchParams }: { searchParams: Promise<{ page?: string; limit?: string }> }) {
+    const queries = await searchParams
+    const page = parseInt(queries?.page ?? "1")
+    const limit = parseInt(queries?.limit ?? "10")
 
     const result = await getPaginatedComplaints(page, limit)
 

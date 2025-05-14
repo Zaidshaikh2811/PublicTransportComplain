@@ -31,16 +31,12 @@ export const metadata: Metadata = {
     description: "Report a problem. We'll get back to you.",
 };
 
-type PageProps = {
-    searchParams: {
-        page?: string;
-    };
-};
 
-const page = async ({ searchParams }: PageProps) => {
+
+const page = async ({ searchParams }: { searchParams: Promise<{ page: string }> }) => {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth_token')?.value;
-
+    const queries = await searchParams
     if (!token) {
         return redirect('/login');
     }
@@ -71,7 +67,7 @@ const page = async ({ searchParams }: PageProps) => {
         return redirect('/login');
     }
 
-    const pageNum = parseInt(searchParams.page || '1');
+    const pageNum = parseInt(queries.page || '1');
     const { data, totalPages } = await getAllComplaints({ email, page: pageNum, limit: 10 });
 
 
