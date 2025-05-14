@@ -107,6 +107,7 @@ export const columns: ColumnDef<Complaint>[] = [
 ]
 
 export function DataTableDemo({ data }: { data: Complaint[] }) {
+
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})

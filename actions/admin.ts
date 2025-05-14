@@ -170,3 +170,15 @@ export const getComplaintRemarks = async (id: string) => {
         return { success: false, error };
     }
 }
+
+
+export const chartData = async () => {
+    try {
+        await connectToDatabase();
+        const resp = await Complaint.find({});
+        return { success: true, data: resp };
+
+    } catch (error) {
+        return { success: false, error };
+    }
+}

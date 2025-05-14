@@ -110,6 +110,10 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.623 0.214 259.815);
+  --primary: 221, 83%, 53%; /* blue-600 */
+  --secondary: 217, 91%, 60%; /* blue-500 */
+  --chart-1: 263, 91%, 65%; /* purple-500 */
+  --chart-2: 142, 71%, 45%; /* green-500 */
 }
 
 .dark {
@@ -144,7 +148,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.488 0.243 264.376);
+  --primary: 217, 91%, 60%; /* blue-500 */
+  --secondary: 213, 94%, 68%; /* blue-400 */
+  --chart-1: 263, 70%, 75%; /* lighter purple */
+  --chart-2: 142, 76%, 55%; /* brighter green */
 }
+
+
 /* 
 body {
   scrollbar-width: none;  
