@@ -36,20 +36,21 @@ import { Badge } from "../ui/badge"
 import { useRouter } from "next/navigation"
 
 export type Complaint = {
-    _id: string
-    transportMode: string
-    issueType: string
-    vehicleNumber: string
-    location: string
-    dateOfIncident: string
-    description: string
-    mediaFiles: { url: string }[]
-    isAnonymous: boolean
-    contactName: string
-    contactInfo: string
-    status: string
-    createdAt: string
-}
+    _id: string;
+    transportMode: string;
+    issueType: string;
+    vehicleNumber: string;
+    location: string;
+    description: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    dateOfIncident: string;
+    mediaFiles: string[];
+    isAnonymous: boolean;
+    contactName: string;
+    contactInfo: string;
+};
 
 export const columns: ColumnDef<Complaint>[] = [
     {

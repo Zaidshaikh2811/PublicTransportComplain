@@ -33,7 +33,7 @@ export async function createUser(formData: CreateUserFormData) {
         if (existingUser) {
             return { success: false, error: "Email already in use" };
         }
-        console.log(name, email, phone, password, anonymous);
+
 
         // 🔐 Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -45,7 +45,7 @@ export async function createUser(formData: CreateUserFormData) {
             anonymous,
             password: hashedPassword
         });
-        console.log(newUser);
+
 
         await newUser.save();
 

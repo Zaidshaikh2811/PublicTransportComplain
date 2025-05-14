@@ -52,8 +52,7 @@ export async function uploadToCloudinary(file: File): Promise<{ url: string; pub
 export async function saveComplaint(payload: ComplaintPayload) {
     try {
         await connectToDatabase();
-        console.log(
-            payload);
+
 
         // Basic validation
         if (!payload.transportMode || !payload.vehicleNumber || !payload.location || !payload.dateOfIncident || !payload.description) {
@@ -120,12 +119,17 @@ export async function saveComplaint(payload: ComplaintPayload) {
 
 
 // Fetch all complaints
-export async function getAllComplaints(email: { email: string }) {
+export async function getAllComplaints({ email }: { email: string }) {
     try {
 
 
         await connectToDatabase();
-        const resp = await Complaint.find({}).where({ isAnonymous: false, contactInfo: email }).sort({ dateOfIncident: -1 });
+        const resp = await Complaint.find({}).where({ isAnonymous: false, contactInfo: email })
+            .sort({ dateOfIncident: -1 })
+            .select('transportMode issueType vehicleNumber location dateOfIncident description status')
+            .lean();;
+
+
         return { success: true, data: resp };
     } catch (error) {
         return { success: false, error };

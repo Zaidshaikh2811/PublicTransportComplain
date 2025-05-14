@@ -9,6 +9,7 @@ import { useActionState, useEffect } from "react"
 import { toast } from "sonner"
 
 interface StatusUpdateFormProps {
+    email: string;
     complaintId: string;
     currentStatus: string;
 }
@@ -23,9 +24,12 @@ const action = async (_prevState: ActionState, formData: FormData): Promise<Acti
 }
 
 export default function StatusUpdateForm({
+    email,
     complaintId,
     currentStatus
 }: StatusUpdateFormProps) {
+    console.log(JSON.parse(complaintId), currentStatus);
+
     const [state, formAction] = useActionState<ActionState, FormData>(action, {
         success: false,
         message: "",
@@ -39,7 +43,8 @@ export default function StatusUpdateForm({
 
     return (
         <form action={formAction} className="w-full">
-            <input type="hidden" name="complaintId" value={complaintId} />
+            <input type="hidden" name="complaintId" value={JSON.parse(complaintId)} />
+            <input type="hidden" name="email" value={email} />
 
             <div className="flex justify-end flex-col sm:flex-row gap-4 items-end">
                 <div className="w-full sm:w-2/3 space-y-2">

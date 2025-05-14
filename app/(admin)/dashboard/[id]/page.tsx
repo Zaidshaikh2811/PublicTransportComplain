@@ -17,11 +17,11 @@ interface MediaFile {
     url: string;
 }
 
-export default async function ComplaintDetails({ params }: { params: { id: string } }) {
-    const { id } = params
+export default async function ComplaintDetails({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     const { data: complaint, error } = await getIndividualComplain(id)
     const { data: remarks } = await getComplaintRemarks(id)
-    console.log(remarks);
+    console.log(complaint);
 
 
     if (error || !complaint) {
@@ -162,7 +162,7 @@ export default async function ComplaintDetails({ params }: { params: { id: strin
                     <div className='mt-10  '>
 
                         <StatusUpdateForm
-
+                            email={complaint.contactInfo}
                             complaintId={JSON.stringify(complaint._id)}
                             currentStatus={complaint.status}
                         />

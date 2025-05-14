@@ -26,7 +26,7 @@ const AddRemarks = ({ complaintId }: { complaintId: string }) => {
             <div className="mt-10 space-y-4">
                 <Label className="text-muted-foreground text-sm">Add Remark</Label>
                 <form className="space-y-2" action={handleFormAction}>
-                    <input type="hidden" name="complaintId" value={complaintId} />
+                    <input type="hidden" name="complaintId" value={JSON.parse(complaintId)} />
                     <input type="hidden" name="addedBy" value="Admin" />
                     <textarea
                         name="text"

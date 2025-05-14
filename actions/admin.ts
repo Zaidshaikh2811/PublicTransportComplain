@@ -12,6 +12,7 @@ const remarkSchema = z.object({
 import { connectToDatabase } from "@/lib/mongodb"
 import { revalidatePath } from "next/cache"
 import Remarks from "@/lib/models/Remarks"
+import { sendComplaintUpdatedEmail } from "@/lib/mail/complaintUpdatedEmail"
 
 export async function getPaginatedComplaints(page = 1, limit = 10) {
     try {
@@ -64,49 +65,54 @@ interface UpdateStatusResult {
 
 export async function updateComplaintStatus(formData: FormData): Promise<UpdateStatusResult> {
     try {
-        await connectToDatabase()
+        await connectToDatabase();
 
-        const complaintId = formData.get("complaintId") as string
-        const status = formData.get("status") as string
-        const adminNotes = formData.get("adminNotes") as string | null
+        const complaintId = formData.get("complaintId") as string;
+        const status = formData.get("status") as string;
+        const email = formData.get("email") as string;
 
         if (!complaintId || !status) {
-            return { success: false, message: "Missing complaint ID or status" }
+            return { success: false, message: "Missing complaint ID or status" };
         }
 
-        const updateData: { status: string; $push?: { adminNotes: { note: string; changedStatus: string; timestamp: Date } } } = {
-            status
-        }
 
-        if (adminNotes) {
-            updateData.$push = {
-                adminNotes: {
-                    note: adminNotes,
-                    changedStatus: status,
-                    timestamp: new Date()
-                }
-            }
-        }
+
+        const timestampField =
+            status === "in-progress"
+                ? { "statusTimestamps.inProgressAt": new Date() }
+                : status === "resolved"
+                    ? { "statusTimestamps.resolvedAt": new Date() }
+                    : {};
+
+
+
+        await sendComplaintUpdatedEmail(email, complaintId, status);
+        const updateData = {
+            status,
+            updatedAt: new Date(),
+            ...timestampField,
+        };
 
         const updatedComplaint = await Complaint.findByIdAndUpdate(
             complaintId,
-            updateData,
+            { $set: updateData },
             { new: true }
-        )
+        );
 
         if (!updatedComplaint) {
-            return { success: false, message: "Complaint not found" }
+            return { success: false, message: "Complaint not found" };
         }
 
-        revalidatePath(`/complaints/${complaintId}`)
-        return { success: true, message: "Status updated successfully" }
+        revalidatePath(`/complaints/${complaintId}`);
+        return { success: true, message: "Status updated successfully" };
     } catch (error) {
         return {
             success: false,
-            message: error instanceof Error ? error.message : "Failed to update status"
-        }
+            message: error instanceof Error ? error.message : "Failed to update status",
+        };
     }
 }
+
 
 
 
@@ -118,7 +124,7 @@ export async function addRemark(formData: FormData) {
             text: formData.get('text')?.toString() || '',
             addedBy: formData.get('addedBy')?.toString() || 'Admin',
         }
-        console.log(raw);
+
 
         // Validate input
         const parsed = remarkSchema.safeParse(raw)

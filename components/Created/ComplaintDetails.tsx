@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Comments from '@/app/(user)/complaint/[id]/Comments';
 
 
 
@@ -27,7 +28,7 @@ type Complaint = {
 };
 
 const ComplaintDetails = ({ complaint }: { complaint: Complaint }) => {
-    console.log(complaint);
+
 
 
     return (
@@ -50,7 +51,7 @@ const ComplaintDetails = ({ complaint }: { complaint: Complaint }) => {
                         <StatusItem label="Submitted by user" date={complaint.statusTimestamps.submittedAt || complaint.createdAt} icon="🚨" />
 
                         <StatusItem label="In progress" date={complaint.statusTimestamps.inProgressAt || " - "} icon="🧑‍🔧" />
-                        {complaint.statusTimestamps.resolvedAt === 'resolved' && (
+                        {complaint.statusTimestamps.resolvedAt && (
                             <StatusItem label="Resolved" date={complaint.statusTimestamps.resolvedAt} icon="✔️" />
                         )}
                     </div>
@@ -103,35 +104,7 @@ const ComplaintDetails = ({ complaint }: { complaint: Complaint }) => {
                 </section>
 
                 {/* Admin Comments */}
-                <section>
-                    <h2 className="text-lg font-semibold text-gray-700 mb-4">Admin Comments</h2>
-                    <div className="space-y-6">
-                        <AdminComment
-                            name="Alice Johnson"
-                            date="2025-05-13 10:00"
-                            message="We are sorry for the inconvenience. Your complaint is being processed."
-                            likes={3}
-                        />
-                        <AdminComment
-                            name="Bob Williams"
-                            date="2025-05-13 12:30"
-                            message="Your complaint is in progress and our team is working on it."
-                            likes={2}
-                        />
-                    </div>
-
-                    {/* Comment Input */}
-                    <div className="mt-6 flex gap-3">
-                        <input
-                            type="text"
-                            placeholder="Type your comment here..."
-                            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button className="bg-blue-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-blue-700 transition-colors">
-                            Send
-                        </button>
-                    </div>
-                </section>
+                <Comments complaintId={complaint._id} />
             </main>
         </div>
     )
@@ -156,27 +129,6 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
     </div>
 )
 
-const AdminComment = ({
-    name,
-    date,
-    message,
-    likes,
-}: {
-    name: string
-    date: string
-    message: string
-    likes: number
-}) => (
-    <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-full bg-gray-300 flex-shrink-0" />
-        <div>
-            <div className="text-sm font-semibold text-gray-800">{name}</div>
-            <div className="text-xs text-gray-500">{date}</div>
-            <p className="mt-1 text-sm text-gray-700">{message}</p>
-            <div className="mt-2 text-xs text-gray-500">👍 {likes}</div>
-        </div>
-    </div>
-)
 
 const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString(undefined, {
