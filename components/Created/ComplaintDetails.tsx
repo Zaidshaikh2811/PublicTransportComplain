@@ -41,7 +41,12 @@ const ComplaintDetails = ({ complaint }: { complaint: Complaint }) => {
                     <h2 className="text-lg font-semibold mb-4">Status</h2>
                     <div className="space-y-4 border-l-4 border-primary pl-4">
                         <StatusItem label="Submitted by user" date={complaint.statusTimestamps.submittedAt || complaint.createdAt} icon="🚨" />
-                        <StatusItem label="In progress" date={complaint.statusTimestamps.inProgressAt || " - "} icon="🧑‍🔧" />
+                        {
+                            complaint.statusTimestamps.inProgressAt && (
+                                <StatusItem label="In progress" date={complaint.statusTimestamps.inProgressAt} icon="🧑‍🔧" />
+                            )
+                        }
+                        {/* <StatusItem label="In progress" date={complaint.statusTimestamps.inProgressAt || " - "} icon="🧑‍🔧" /> */}
                         {complaint.statusTimestamps.resolvedAt && (
                             <StatusItem label="Resolved" date={complaint.statusTimestamps.resolvedAt} icon="✔️" />
                         )}

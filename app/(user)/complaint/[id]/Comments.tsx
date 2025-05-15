@@ -28,7 +28,6 @@ const Comments = async ({ complaintId }: { complaintId: string }) => {
 
 
     const complaint = await getComplaintRemarks(complaintId)
-    console.log(complaint);
 
 
     return (

@@ -7,6 +7,7 @@ export interface IUser extends Document {
     phone?: string;
     anonymous: boolean;
     password: string;
+    role: string;
 
 }
 
@@ -15,6 +16,7 @@ const UserSchema = new Schema<IUser>(
         name: { type: String, required: false },
         email: { type: String, required: false },
         phone: { type: String, required: false },
+        role: { type: String, default: "user" },
         anonymous: { type: Boolean, default: false },
         password: { type: String },
     },

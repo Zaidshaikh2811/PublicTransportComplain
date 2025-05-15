@@ -77,16 +77,15 @@ export async function loginUser(formData: LoginUserFormData) {
 
         const user = await User.findOne({ email });
         if (!user) return { success: false, error: "User not found" };
-        console.log(email, password);
-        console.log(user.password);
+
 
         const isPasswordValid = await bcrypt.compare(password, user.password || "");
-        console.log(isPasswordValid);
+
 
         if (!isPasswordValid) return { success: false, error: "Invalid credentials" };
 
         const token = jwt.sign(
-            { userId: user._id, email: user.email },
+            { userId: user._id, email: user.email, role: user.role || "user " },
             JWT_SECRET,
             { expiresIn: "1h" }
         );
@@ -95,19 +94,13 @@ export async function loginUser(formData: LoginUserFormData) {
         Cookies.set({
             name: "auth",
             value: token,
-            httpOnly: true,
+
             path: "/",
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: 60 * 60 * 24 // 1 day
         });
 
-        // Cookies.set("auth", token, {
-        //     expires: 60 * 60 * 24,         // 1 day
-        //     path: "/",          // Accessible across entire site
-        //     sameSite: "strict",  // CSRF protection
-        //     secure: process.env.NODE_ENV === "production" // HTTPS only in production
-        // });
 
         return { success: true, message: "Logged in successfully", token, user: email };
     } catch (error) {
@@ -128,11 +121,10 @@ export const logoutUser = async () => {
 
 
 export async function checkCookies() {
-    // const cookieStore = await cookies();
+
     const cookieStore = await cookies();
     const token = cookieStore.get('auth')?.value;
 
-    console.log(token);
 
     if (token) {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
@@ -147,4 +139,30 @@ export async function checkCookies() {
         return { success: false, message: "User is not logged in" };
     }
 
+}
+
+
+export async function getCurrentUser() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth')?.value;
+    if (!token) return null;
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as {
+            userId: string;
+            email: string;
+            role: string;
+        };
+        return { success: true, decoded };
+    } catch {
+        return { success: false, message: "Invalid token" };
+    }
+}
+
+export async function isAdmin() {
+    const user = await getCurrentUser();
+    if (user?.success && user.decoded) {
+        return user.decoded.role === 'admin';
+    }
+    return false;
 }

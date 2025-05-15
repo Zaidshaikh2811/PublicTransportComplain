@@ -53,11 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("user");
 
 
-        Cookies.remove("auth_token", {
-            path: "/",
-            sameSite: "strict",
-            secure: process.env.NODE_ENV === "production"
-        });
+        Cookies.remove("auth", { path: "/" });
         setUser(null);
         window.location.reload();
     };

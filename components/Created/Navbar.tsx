@@ -15,6 +15,10 @@ import { Menu } from "lucide-react";
 import { ModeToggle } from "../ui/ModeToggle";
 import LoginLogout from "./LoginLogout";
 import Link from "next/link";
+import { getCurrentUser } from "@/actions/user";
+
+
+
 
 const NAV_LINKS = [
     { name: "Home", href: "/" },
@@ -24,7 +28,19 @@ const NAV_LINKS = [
     { name: "Contact", href: "/contact" },
 ];
 
-const Navbar = () => {
+
+
+const Navbar = async () => {
+
+    const user = await getCurrentUser();
+    const isAdmin = user?.success && user.decoded?.role === "admin";
+    console.log(isAdmin);
+
+    // 🔥 Append dashboard link if admin
+    const linksToShow = [...NAV_LINKS];
+    if (isAdmin) {
+        linksToShow.push({ name: "Dashboard", href: "/admin" });
+    }
     return (
         <header className="bg-background border-b">
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -36,7 +52,7 @@ const Navbar = () => {
                 {/* Desktop Navigation */}
                 <NavigationMenu className="hidden md:block">
                     <NavigationMenuList className="flex gap-6">
-                        {NAV_LINKS.map((item) => (
+                        {linksToShow.map((item) => (
                             <NavigationMenuItem key={item.name}>
                                 <NavigationMenuLink
                                     className="text-muted-foreground transition hover:text-foreground"
@@ -64,8 +80,8 @@ const Navbar = () => {
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="right" className="w-64">
-                            <nav className="flex flex-col gap-4 mt-4">
-                                {NAV_LINKS.map((item) => (
+                            <nav className="flex flex-col gap-4 mt-4 pt-16 px-4">
+                                {linksToShow.map((item) => (
                                     <Link
                                         key={item.name}
                                         href={item.href}

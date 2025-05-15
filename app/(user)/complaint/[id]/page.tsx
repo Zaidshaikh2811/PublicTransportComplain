@@ -14,7 +14,7 @@ const ComplaintDetailsPage = async ({ params }: { params: Promise<{ id: string }
     const { id } = await params
     const { data } = await getSpecificComplain(id)
 
-    console.log(data);
+
 
     return (
         <ComplaintDetails complaint={data} />
