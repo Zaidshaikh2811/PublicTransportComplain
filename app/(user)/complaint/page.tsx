@@ -1,13 +1,14 @@
 
 import { getAllComplaints } from '@/actions/complaint';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
-import { toast } from 'sonner';
+
 import { DataTableDemo } from '@/components/Created/DataTableDemo';
 import { complaintColumns } from '@/components/Created/ComplainColoum';
 import Link from 'next/link';
+import { checkCookies } from '@/actions/user';
+
 
 
 type Complaint = {
@@ -32,40 +33,21 @@ export const metadata: Metadata = {
 };
 
 
-
 const page = async ({ searchParams }: { searchParams: Promise<{ page: string }> }) => {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
+
+
+
+    const resp = await checkCookies();
+    if (!resp.success) {
+
+
+        return redirect('/login');
+    }
+    const { email } = resp
+
+
     const queries = await searchParams
-    if (!token) {
-        return redirect('/login');
-    }
 
-    // 2. Decode and validate token
-    let email: string | null = null;
-
-    try {
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
-
-        if (typeof decodedToken !== 'string' && 'email' in decodedToken) {
-            email = decodedToken.email;
-        } else {
-            toast.error('Invalid token');
-            return redirect('/login');
-        }
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            console.error('JWT Error:', err.message);
-        } else {
-            console.error('Unexpected error:', err);
-        }
-        console.error('JWT Error:', err instanceof Error ? err.message : err);
-        return redirect('/login');
-    }
-
-    if (!email) {
-        return redirect('/login');
-    }
 
     const pageNum = parseInt(queries.page || '1');
     const { data, totalPages } = await getAllComplaints({ email, page: pageNum, limit: 10 });

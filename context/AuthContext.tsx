@@ -40,12 +40,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (token) {
 
 
-            Cookies.set("auth_token", token, {
-                expires: 1,         // 1 day
-                path: "/",          // Accessible across entire site
-                sameSite: "strict",  // CSRF protection
-                secure: process.env.NODE_ENV === "production" // HTTPS only in production
-            });
+            // Cookies.set("auth_token", token, {
+            //     expires: 1,         // 1 day
+            //     path: "/",          // Accessible across entire site
+            //     sameSite: "strict",  // CSRF protection
+            //     secure: process.env.NODE_ENV === "production" // HTTPS only in production
+            // });
         }
         setUser(userData);
     };

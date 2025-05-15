@@ -7,7 +7,7 @@ import { registerSchema } from "@/lib/validation/userSchema";
 import { sendWelcomeEmail } from "@/lib/mail/welcomeEmail";
 import { loginSchema } from "@/lib/validation/userSchema";
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
-
+import { cookies } from 'next/headers'
 interface CreateUserFormData {
     name: string;
     email: string;
@@ -90,6 +90,24 @@ export async function loginUser(formData: LoginUserFormData) {
             JWT_SECRET,
             { expiresIn: "1h" }
         );
+        const Cookies = await cookies()
+
+        Cookies.set({
+            name: "auth",
+            value: token,
+            httpOnly: true,
+            path: "/",
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 60 * 24 // 1 day
+        });
+
+        // Cookies.set("auth", token, {
+        //     expires: 60 * 60 * 24,         // 1 day
+        //     path: "/",          // Accessible across entire site
+        //     sameSite: "strict",  // CSRF protection
+        //     secure: process.env.NODE_ENV === "production" // HTTPS only in production
+        // });
 
         return { success: true, message: "Logged in successfully", token, user: email };
     } catch (error) {
@@ -107,3 +125,26 @@ export const logoutUser = async () => {
         return { success: false, error: "Server error" };
     }
 };
+
+
+export async function checkCookies() {
+    // const cookieStore = await cookies();
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth')?.value;
+
+    console.log(token);
+
+    if (token) {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+        let email
+        if (typeof decodedToken !== 'string' && 'email' in decodedToken) {
+            email = decodedToken.email;
+        } else {
+            return { success: false, message: "Invalid token" };
+        }
+        return { success: true, email };
+    } else {
+        return { success: false, message: "User is not logged in" };
+    }
+
+}
