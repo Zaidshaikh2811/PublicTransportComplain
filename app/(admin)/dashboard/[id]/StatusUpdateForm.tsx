@@ -28,7 +28,7 @@ export default function StatusUpdateForm({
     complaintId,
     currentStatus
 }: StatusUpdateFormProps) {
-    console.log(JSON.parse(complaintId), currentStatus);
+
 
     const [state, formAction] = useActionState<ActionState, FormData>(action, {
         success: false,

@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 const protectedRoutes = ["/dashboard", "/profile", "/complaints"];
 
 export async function middleware(req: NextRequest) {
-    const isAuth = req.cookies.get("auth_token"); // Set this token on login (e.g., JWT or flag)
+    const isAuth = req.cookies.get("auth"); // Set this token on login (e.g., JWT or flag)
 
 
 

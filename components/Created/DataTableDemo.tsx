@@ -31,7 +31,7 @@ export function DataTableDemo<TData extends { id: string }, TValue>({
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
-    console.log(data);
+
     const router = useRouter()
     return (
         <div className="rounded-md border">

@@ -21,7 +21,6 @@ export default async function ComplaintDetails({ params }: { params: Promise<{ i
     const { id } = await params
     const { data: complaint, error } = await getIndividualComplain(id)
     const { data: remarks } = await getComplaintRemarks(id)
-    console.log(complaint);
 
 
     if (error || !complaint) {

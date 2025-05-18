@@ -76,7 +76,7 @@ export default async function ComplaintsPage({ searchParams }: { searchParams: P
 
             <section>
                 <h2 className="text-2xl font-semibold mb-4">All Complaints</h2>
-                {pagination && <DataTableDemo data={complaints} pagination={pagination} />}
+                {pagination && <DataTableDemo data={JSON.parse(JSON.stringify(complaints))} pagination={pagination} />}
             </section>
         </div>
     )

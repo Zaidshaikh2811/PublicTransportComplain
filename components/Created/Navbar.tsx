@@ -34,12 +34,11 @@ const Navbar = async () => {
 
     const user = await getCurrentUser();
     const isAdmin = user?.success && user.decoded?.role === "admin";
-    console.log(isAdmin);
 
     // 🔥 Append dashboard link if admin
     const linksToShow = [...NAV_LINKS];
     if (isAdmin) {
-        linksToShow.push({ name: "Dashboard", href: "/admin" });
+        linksToShow.push({ name: "Dashboard", href: "/dashboard" });
     }
     return (
         <header className="bg-background border-b">
