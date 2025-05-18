@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Public Transport Application
+
+A modern web application built with Next.js that provides public transport information and services. This application offers a user-friendly interface for managing transportation-related services with integrated contact functionality.
+
+## Features
+
+- 🚌 Public transport information and management
+- 📱 Responsive design for all devices
+- 📧 Contact form with email integration
+- 🔐 User authentication
+- 🎨 Modern UI with custom components
+- ⚡ Server-side rendering for optimal performance
+
+## Technologies Used
+
+- **Framework:** Next.js 14
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** Shadcn/ui
+- **Email Service:** Custom email integration
+- **Authentication:** Built-in Next.js authentication
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18.x or later
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/public_transport.git
+cd public_transport
+```
+
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables
+Create a `.env` file in the root directory with the following variables:
+```bash
+EMAIL_USER=your_email@example.com
+# Add other required environment variables
+```
+
+4. Run the development server
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API Endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Contact API
 
-## Learn More
+POST `/api/contact`
+- Handles contact form submissions
+- Request body:
+```json
+{
+    "name": "string",
+    "email": "string",
+    "subject": "string",
+    "message": "string"
+}
+```
+- Returns:
+  - 200: Success
+  - 400: Missing fields
+  - 500: Server error
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+├── app/                 # Next.js app directory
+├── components/         # Reusable UI components
+├── actions/           # Server actions
+├── lib/              # Utility functions
+├── public/           # Static assets
+└── ...
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contributing
 
-## Deploy on Vercel
+Contributions are welcome! Please follow these steps:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Support
+
+For support, please:
+- Open an issue in the GitHub repository
+- Contact through the website's contact form
+- Email: [zaidshaikh2811@gmail.com]
+
+ 
